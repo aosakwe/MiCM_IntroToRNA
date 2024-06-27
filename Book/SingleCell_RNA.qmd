@@ -9,7 +9,7 @@ editor: visual
 
 This section contains very basic examples of R code for Single cell analyses using 10X data.
 
-Examples in this section were made using the OSCA e-book and data from the 10X Genomics Dataset Page.
+Examples in this section were made using the OSCA e-book and data from the 10X Genomics Dataset Page. Pancreas datasets came from the Grun et al. and Muraro et al. papers.
 
 ## 1. Loading 10X Data into R
 
@@ -86,7 +86,7 @@ We also want to filter out the following:
 
 -   empty droplets
 
--   doublet cells
+-   doublet cells (scDblFinder)
 
 In practice, you may want to also consider some other features.
 
@@ -190,7 +190,7 @@ plotUMAP(sce, colour_by="label")
 
 ## 4. Cell Type Annotation
 
-With our generated UMAP coordinates and clusters, we can undertake the task of cell annotation. It is possible to do this manually and automatically. In practice, I suggest to combine both approaches to ensure your annotations are as accurate as possible.
+With our generated UMAP coordinates and clusters, we can undertake the task of cell annotation. It is possible to do this manually and automatically. In practice, I suggest to combine both approaches to ensure your annotations are as accurate as possible. In this section we will use pancreas samples.
 
 ### Automated Annotation
 
@@ -199,7 +199,22 @@ A key advantage of automated annotation is that it usually (depending on the met
 ```{r}
 #Single R
 library(SingleR)
+sceM <- readRDS("../Data/ref_pancreas.rds")
+sceG <- readRDS("../Data/pancreas_sce.rds")
+sceM <- logNormCounts(sceM)
+sceG <- logNormCounts(sceG) 
 
+pred.grun <- SingleR(test=sceG, ref=sceM, labels=sceM$label, de.method="wilcox")
+table(pred.grun$labels)
+
+sceG$pred <- pred.grun$labels
+
+
+decG <- modelGeneVar(sceG)
+top_hvgsG <- getTopHVGs(decG,n = 2000)
+sceG <- denoisePCA(sceG, subset.row=top_hvgsG, technical=decG)
+sceG <- runUMAP(sceG, dimred="PCA")
+plotUMAP(sceG, colour_by="pred")
 ```
 
 ### Manual Annotation
@@ -207,7 +222,18 @@ library(SingleR)
 An issue with labeling individual cells is that their annotation is more susceptible to noise. To this end, manual annotations which are usually done at the level of clusters may be more reliable.
 
 ```{r}
+#Generate Clusters
+set.seed(1234)
+g <- buildSNNGraph(sceG, k=7, use.dimred = 'PCA')
+clust <- igraph::cluster_walktrap(g)$membership
+colLabels(sceG) <- factor(clust)
+plotUMAP(sceG, colour_by="label")
+rownames(sceG) <- rowData(sceG)$symbol
+plotExpression(sceG, features=c("INS-IGF2", "GCG",
+    "SST", "PRSS1"), x="label", colour_by="label")
 
+
+plotUMAP(sceG, colour_by="INS")
 ```
 
 ### Considerations for DGE during cluster annotation
@@ -215,15 +241,7 @@ An issue with labeling individual cells is that their annotation is more suscept
 Previously, many researchers would simply run a DGE analysis on different clusters to determine cell types. However, this has been proven to be a case of 'double-dipping' data which is a serious concern for reproducibility. Although this approach can work fine for very distinct cell types, it is not recommended for the analysis of more similar cell types of cell subtypes.
 
 ```{r}
-markers <- findMarkers(sce, pval.type="some", direction="up")
-marker.set <- markers[["8"]]
+markers <- findMarkers(sceG, pval.type="some", direction="up")
+marker.set <- markers[["4"]]
 as.data.frame(marker.set[1:30,1:3])
-plotExpression(sce, features=c("CD14", "CD68",
-    "MNDA", "FCGR3A"), x="label", colour_by="label")
 ```
-
-## 5. Other Downstream Tasks
-
-### Pseudotime
-
-### Pathway Scores
