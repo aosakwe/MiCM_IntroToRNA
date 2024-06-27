@@ -1,0 +1,63 @@
+---
+title: "Installation Guide"
+author: "Adrien Osakwe"
+format: pdf
+editor: visual
+---
+
+## Installation Guide
+
+To go through this workshop, you will need to install a set of packages. Note that no installation is required for all sections that occur before we work with a count matrix (we will run those tools through the Galaxy browser tool).
+
+Please make sure you are using R 4.0.0 or above for this session,
+
+If you encounter any issues with the installation, please take a screenshot of the full error message and contact me at [adrien.osakwe\@mail.mcgill.ca](adrien.osakwe@mail.mcgill.ca)!
+
+Looking forward to the workshop!
+
+## Standard Packages
+
+```{r,message=FALSE,warning=FALSE}
+# General Packages
+if (!require('tidyverse')){
+  install.packages('tidyverse')
+}
+```
+
+## DESeq2 Packages
+
+```{r,message=FALSE,warning=FALSE}
+#Packages for DESeq2 Section
+if (!require('BiocManager')){
+  install.packages('BiocManager')
+}
+
+BiocManager::install('DESeq2')
+BiocManager::install('fgsea')
+BiocManager::install('org.Hs.eg.db')
+BiocManager::install('apeglm')
+```
+
+## Single Cell Packages
+
+```{r,message=FALSE,warning=FALSE}
+#Packages for Single Cell Analysis
+BiocManager::install('DropletUtils')
+BiocManager::install('scater')
+BiocManager::install('scran')
+BiocManager::install('SingleR')
+```
+
+## Test Loading Packages
+
+```{r,message=FALSE,warning=FALSE}
+library(tidyverse)
+library(DESeq2)
+library(fgsea)
+library(org.Hs.eg.db)
+library(DropletUtils)
+library(scater)
+library(scran)
+library(SingleR)
+library(apeglm)
+```

@@ -1,0 +1,288 @@
+---
+title: "DESeq2 Analysis"
+author: "Adrien Osakwe"
+format: html
+editor: visual
+---mes(sc
+---
+
+## Analysis with DESeq2
+
+In this notebook we will explore how to run an RNA-seq analysis using DESeq2. At the end of this section you should have a reasonable grasp of:
+
+1.  How to create a DESeq2 object
+
+2.  How to identify potential confounding variables
+
+3.  How to run DESeq2 with a specific design formula
+
+4.  How to read and interpret DESeq2 results
+
+5.  How to run a GSEA analysis
+
+As differential gene expression (DGE) involves cross-sample comparisons, it is essential to use normalized counts. RPKM, FPKM and TMM remove most noise affiliated with sequencing depth as discussed previously. However, these approaches only deal with absolute counts and perform poorly when the transcript distributions are skewed due to highly and differentially-expressed genes. This concern is managed by methods such as **DESeq** and others which ignore highly variable and/or expressed genes. We also need to account for differences in transcript length across samples/conditions, positional biases along transcript (Cufflinks), and gene-specific GC content (EDAseq). NOISeq can be used to create visualizations for all these biases and efficiently decide what normalization tool should be used. Despite these steps, additional batch effects can still occur and should be minimized with **good experimental design** or with **batch correction methods** like COMBAT or ARSyN.
+
+As RNA-seq data is expressed as counts, most differential expression methods model the counts with discrete distributions such as the poisson, or the negative-binomial (gamma-poisson) which allows for additional variance (overdispersion) beyond what is expected from sampling a random pool of molecules. In practice, a discrete distribution is not required if we account for the sampling variance of small read counts (particularly in studies with few replicates). Many methods that transform normalized RNA-seq counts and learn the underling variance structure perform quite well. It is also worth noting that with sufficient normalization, the data will no longer hold its discrete property and should be modeled with a continuous distribution. In practice, most researchers use one of edgeR, DESeq2 or limma. All three methods have variants that allow for the inclusion of covariates (worth using based on PCA plots).
+
+## 1. Loading Count Matrix into R
+
+The first step to a DESeq2 analysis is to load your data into R and create a DESeq2 object. We need two items:
+
+-   a count matrix with genes as rows and samples as columns
+
+-   a metadata matrix (colData) which contains the condition and covariate data for all samples
+
+```{r}
+set.seed(1234)
+library(DESeq2)
+library(tidyverse)
+#Data acquired from pasilla package
+
+#Load counts and metadata
+rna_counts <- read.csv("../Data/AB_counts.csv",header = T,row.names = 'X')
+metadata <- read.csv("../Data/AB_metadata.csv",header = T,row.names = 'X')
+
+# Preview input data
+head(rna_counts)
+head(metadata)
+
+
+#Sanity Check
+table(rownames(metadata) == colnames(rna_counts))
+```
+
+```{r}
+
+#Proposed Experiment Design
+design <- ~ condition
+
+#convert metadata to factors
+metadata$type <- factor(metadata$type)
+metadata$condition <- factor(metadata$condition)
+#Create Object
+dds <- DESeqDataSetFromMatrix(countData = rna_counts,
+                              colData = metadata,
+                              design = design)
+
+#Ensure default comparisons are w.r.t control
+dds$condition <- relevel(dds$condition, ref = 'untreated')
+```
+
+```{r}
+#Check feature data in dds object
+rowData(dds)
+#Add entity
+rowData(dds)$RandInt <- sample(1:10,nrow(dds),replace = T)
+
+#Check metadata
+colData(dds)
+
+
+```
+
+## 2. Exploratory Analysis
+
+```{r}
+## Filtering low count genes
+##DESeq2 devs suggest pre-filtering low count genes to save memory
+mingroup <- 3
+keep <- rowSums(counts(dds) >= 10) >= mingroup
+dds <- dds[keep,]
+```
+
+```{r}
+## PCA Plots
+
+#Transform counts (also consider rlog function)
+vsd <- vst(dds)
+plotPCA(vsd, intgroup=c("condition", "type"))
+```
+
+```{r}
+# Looking at Dispersion plots
+#Calculate size factors for normalization
+dds <- estimateSizeFactors(dds)
+#Dispersion estimates
+dds <- estimateDispersions(dds)
+plotDispEsts(dds)
+```
+
+## 3. Running DESeq2
+
+```{r}
+dds <- DESeq(dds)
+dds_res <- results(dds, name="condition_treated_vs_untreated")
+
+head(dds_res)
+```
+
+### LFC Shrinkage
+
+```{r}
+resultsNames(dds)
+resLFC <- lfcShrink(dds, coef="condition_treated_vs_untreated", type="apeglm")
+head(resLFC)
+```
+
+### Visualize Results
+
+#### MA Plot
+
+```{r}
+plotMA(dds_res, ylim=c(-2,2))
+plotMA(resLFC, ylim=c(-2,2))
+```
+
+#### Volcano Plot
+
+```{r}
+df_res <- as.data.frame(resLFC)
+df_res$GeneOfInterest <- df_res$padj < 0.05 & abs(df_res$log2FoldChange) >= 2
+
+
+ggplot(df_res,aes(log2FoldChange,-log10(padj),color = GeneOfInterest)) + 
+  geom_point()
+```
+
+```{r}
+#Add Name of Genes if they are a gene of interest
+ex_res <- df_res
+ex_res$GeneID <- rownames(ex_res)
+
+ex_res$GeneOfInterest <- ex_res$padj < 0.05 & abs(ex_res$log2FoldChange) >= 3
+
+ggplot(ex_res, aes(x = log2FoldChange, y = -log10(padj))) + 
+  geom_point(aes(color = GeneOfInterest)) + 
+  geom_text(data = ex_res %>% filter(GeneOfInterest), aes(label = GeneID))
+```
+
+```{r}
+#Additional Annotations for Volcano Plot
+ex_res <- df_res
+ex_res$GeneOfInterest[ex_res$padj < 0.05 & ex_res$log2FoldChange >= 1] <- 'UP'
+ex_res$GeneOfInterest[ex_res$padj < 0.05 & ex_res$log2FoldChange <= -1] <- 'DOWN'
+ex_res$GeneOfInterest[ex_res$padj < 0.05 & abs(ex_res$log2FoldChange) < 1] <- 'LFC-THR'
+ex_res$GeneOfInterest[ex_res$padj >= 0.05] <- 'NSC'
+
+
+ggplot(ex_res,aes(log2FoldChange,-log10(padj),
+                  color = GeneOfInterest)) + 
+  geom_point() + 
+  geom_hline(yintercept = -log10(0.05),
+             linetype = "dashed") + 
+  geom_vline(xintercept = c(log2(0.5), log2(2)),
+             linetype = "dashed")   
+```
+
+## 4. Including Covariates
+
+```{r}
+codds <- dds
+
+design(codds) <- ~ type + condition
+
+codds <- DESeq(codds)
+resultsNames(codds)
+
+```
+
+```{r}
+coresLFC <- lfcShrink(codds, 
+                      coef="condition_treated_vs_untreated", type="apeglm")
+head(coresLFC)
+df_cores <- as.data.frame(coresLFC)
+df_cores$GeneOfInterest <- df_cores$padj < 0.05 & abs(df_cores$log2FoldChange) >= 2
+
+
+table(rownames(df_res[df_res$GeneOfInterest,]) %in%
+        rownames(df_cores[df_cores$GeneOfInterest,]))
+```
+
+```{r}
+ex_res <- df_cores
+ex_res$GeneID <- rownames(ex_res)
+
+ex_res$GeneOfInterest <- ex_res$padj < 0.05 & abs(ex_res$log2FoldChange) >= 3
+
+ggplot(ex_res, aes(x = log2FoldChange, y = -log10(padj))) + 
+  geom_point(aes(color = GeneOfInterest)) + 
+  geom_text(data = ex_res %>% filter(GeneOfInterest), aes(label = GeneID))
+```
+
+## 4. Gene Set Enrichment Analysis
+
+Data and code from Stephen Turner (stephenturner.github.io).
+
+Dataset includes 8 smooth muscle cell samples from 4 different cell lines and 2 distinct treatments. It represents the outputs from DESeq2 using the following formula: \~ cell line + treatment.
+
+```{r}
+library(fgsea)
+#Load DESeq2 results
+res <- read.csv("../Data/deseq-results-tidy-human-airway.csv",row.names = 'X')
+
+
+
+#Convert to Gene Symbol
+library(org.Hs.eg.db)
+ens2symbol <- AnnotationDbi::select(org.Hs.eg.db,
+                                    key=res$row, 
+                                    columns="SYMBOL",
+                                    keytype="ENSEMBL")
+ens2symbol <- as_tibble(ens2symbol)
+ens2symbol
+res <- inner_join(res, ens2symbol, by=c("row"="ENSEMBL"))
+res
+```
+
+```{r}
+#Filter columns and deframe object
+res2 <- res %>% 
+  dplyr::select(SYMBOL, stat) %>% 
+  na.omit() %>% 
+  distinct() %>% 
+  group_by(SYMBOL) %>% 
+  summarize(stat=mean(stat))
+
+ranks <- deframe(res2)
+head(ranks, 20)
+#Get Gene Set (MSigDB Hallmarks)
+pathways.hallmark <- gmtPathways("../Data/h.all.v2023.2.Hs.symbols.gmt")
+#Run GSEA
+fgseaRes <- fgsea(pathways=pathways.hallmark, stats=ranks, nperm=1000)
+```
+
+Exercise: Repeat the above using a gene set you found on the MSigDB webpage.
+
+```{r}
+fgseaResTidy <- fgseaRes %>%
+  as_tibble() %>%
+  arrange(desc(NES))
+
+# Show in a nice table:
+fgseaResTidy %>% 
+  dplyr::select(-leadingEdge, -ES, -nMoreExtreme) %>% 
+  arrange(padj)
+```
+
+```{r}
+ggplot(fgseaResTidy, aes(reorder(pathway, NES), NES)) +
+  geom_col(aes(fill=padj<0.05)) +
+  coord_flip() +
+  labs(x="Pathway", y="Normalized Enrichment Score",
+       title="Hallmark pathways NES from GSEA") + 
+  theme_minimal()
+```
+
+## 5. Incorporating other Genomic assays
+
+### ATAC-seq
+
+Chromatin Accessibility can be used in tandem with gene expression to identify cis-regulatory elements (CREs) that affect transcription.
+
+### Whole Genome Sequencing (WGS)
+
+Identifying SNPs for each RNA-seq sample can be used to identify **expression quantitative trait loci (eQTLs)**. These represent individual variants that have a significant effect on the expression level of a gene. Consider looking at the [GTEx Portal](https://www.gtexportal.org/home/) for a large suite of eQTL studies.
+
+### DNA Methylation (WGBS)
+
+Differentially methylated sites could help explain transcription patterns found in RNA-seq.
