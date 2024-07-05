@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Adrien Osakwe">
+
+<title>MiCM Intro to RNA-seq - 3&nbsp; MiCM Intro to RNA-seq</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./Galaxy_Tutorial.html" rel="next">
+<link href="./InstallationGuide.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar docked nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">MiCM Intro to RNA-seq</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="./index.html" rel="" target="" aria-current="page">
+ <span class="menu-text">Home</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools ms-auto">
+    <a href="https://github.com/aosakwe/MiCM_IntroToRNA" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <div class="dropdown">
+      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Share"><i class="bi bi-share"></i></a>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item quarto-navbar-tools ms-auto-item" href="https://twitter.com/intent/tweet?url=|url|">
+              <i class="bi bi-bi-twitter pe-1"></i>
+            Twitter
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item quarto-navbar-tools ms-auto-item" href="https://www.linkedin.com/sharing/share-offsite/?url=|url|">
+              <i class="bi bi-bi-linkedin pe-1"></i>
+            LinkedIn
+            </a>
+          </li>
+      </ul>
+    </div>
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./EDQC_RNA.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">MiCM Intro to RNA-seq</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Intro</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./InstallationGuide.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Installation Guide</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./EDQC_RNA.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">MiCM Intro to RNA-seq</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Galaxy_Tutorial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Galaxy Tutorial</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Analysis_DESeq2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">DESeq2 Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./SingleCell_RNA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Single Cell Intro</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#experimental-design" id="toc-experimental-design" class="nav-link active" data-scroll-target="#experimental-design"><span class="header-section-number">3.1</span> Experimental Design</a>
+  <ul class="collapse">
+  <li><a href="#rna-extraction-protocol" id="toc-rna-extraction-protocol" class="nav-link" data-scroll-target="#rna-extraction-protocol"><span class="header-section-number">3.1.1</span> RNA-extraction protocol</a></li>
+  <li><a href="#single-end-vs.-paired-end-review---add-diagram" id="toc-single-end-vs.-paired-end-review---add-diagram" class="nav-link" data-scroll-target="#single-end-vs.-paired-end-review---add-diagram"><span class="header-section-number">3.1.2</span> Single-End vs.&nbsp;Paired-end (REVIEW - add diagram)</a></li>
+  <li><a href="#library-size" id="toc-library-size" class="nav-link" data-scroll-target="#library-size"><span class="header-section-number">3.1.3</span> Library size</a></li>
+  <li><a href="#number-of-replicates" id="toc-number-of-replicates" class="nav-link" data-scroll-target="#number-of-replicates"><span class="header-section-number">3.1.4</span> Number of replicates</a></li>
+  </ul></li>
+  <li><a href="#analysis" id="toc-analysis" class="nav-link" data-scroll-target="#analysis"><span class="header-section-number">3.2</span> Analysis</a>
+  <ul class="collapse">
+  <li><a href="#quality-control-checkpoints" id="toc-quality-control-checkpoints" class="nav-link" data-scroll-target="#quality-control-checkpoints"><span class="header-section-number">3.2.1</span> Quality Control Checkpoints</a></li>
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section"><span class="header-section-number">3.2.2</span> </a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/aosakwe/MiCM_IntroToRNA/edit/main/EDQC_RNA.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">MiCM Intro to RNA-seq</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Adrien Osakwe </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="experimental-design" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="experimental-design"><span class="header-section-number">3.1</span> Experimental Design</h2>
+<p>The first step is to ensure that the proposed experimental design has the potential to answer the desired biological question. To achieve this, we need to make appropriate selections for</p>
+<ul>
+<li><p>library type</p></li>
+<li><p>sequencing depth</p></li>
+<li><p>number of replicates</p></li>
+</ul>
+<p>while also ensuring that the execution of the experiment does not acquire additional biases (ensuring case and control replicates are not in separate batches for example).</p>
+<section id="rna-extraction-protocol" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="rna-extraction-protocol"><span class="header-section-number">3.1.1</span> RNA-extraction protocol</h3>
+<p>The RNA-extraction protocol is necessary to remove highly abundant transcripts (usually ribosomal RNA which represents 90% of total RNA in the cell) which could cloud the underlying biological signal of interest (mRNA only represents 1-2% of transcripts). In eukaryotes, we can enrich our samples for mRNA via Poly(A) selection or rRNA depletion.</p>
+<section id="polya-selection" class="level4" data-number="3.1.1.1">
+<h4 data-number="3.1.1.1" class="anchored" data-anchor-id="polya-selection"><span class="header-section-number">3.1.1.1</span> Poly(A) Selection</h4>
+<p>Poly(A) selection requires a relatively high proportion of mRNA to be present with minimal degradation. Degradation is measured by the RNA integrity number (RIN). We can expect this to lead to a higher proportion of sequenced reads overlapping known exons. <strong>However, most samples cannot be obtained in sufficient quantity or quality (RIN) to produce satisfactory Poly(A) libraries</strong>. As a result, ribosomal depletion is often used instead.</p>
+</section>
+<section id="strand-preserving-libraries-review" class="level4" data-number="3.1.1.2">
+<h4 data-number="3.1.1.2" class="anchored" data-anchor-id="strand-preserving-libraries-review"><span class="header-section-number">3.1.1.2</span> Strand-Preserving Libraries (REVIEW)</h4>
+<p>In cases where we want to account for the quantification of antisense and/or overlapping transcripts, standard methods such as Illumina’s random hexamer priming (1st Gen) are insufficient as they are missing sections of the DNA strand that are expressed. There exists many protocols which overcome this, a notable example being <strong>dUTP</strong>,which incoroporates UTP nucleotides prior to adapter ligation.</p>
+<p>The size of the fragments generated by the library protocol are crucial determinants for adequate sequencing and analysis. Note that longer reads facilitate accurate alignment to a reference transcriptome and improve isoform identification.</p>
+</section>
+</section>
+<section id="single-end-vs.-paired-end-review---add-diagram" class="level3" data-number="3.1.2">
+<h3 data-number="3.1.2" class="anchored" data-anchor-id="single-end-vs.-paired-end-review---add-diagram"><span class="header-section-number">3.1.2</span> Single-End vs.&nbsp;Paired-end (REVIEW - add diagram)</h3>
+<ul>
+<li><p>Paired-end reads are preferred for de novo assembly and isoform analysis</p></li>
+<li><p>Single-end reads are cheaper and sufficient for well-annotated organisms to study gene expression levels</p></li>
+<li><p>Paired-end is more reliable when working with poorly annotated transcriptomes.</p></li>
+<li><p>single-end only reads the fragment once, paired-end reads it one way then back the other (higher accuracy for alignment and downstream tasks)</p></li>
+</ul>
+</section>
+<section id="library-size" class="level3" data-number="3.1.3">
+<h3 data-number="3.1.3" class="anchored" data-anchor-id="library-size"><span class="header-section-number">3.1.3</span> Library size</h3>
+<p>This represents the number of sequenced reads per sample. The greater the library size, the easier it will be to generate accurate measurements that include rare transcripts. The selected depth will depend on your experimental setup. If the expected expression changes are in highly-expressed genes, it may be sufficient to use around 5 million reads. However, if there is a need to identify changes in genes with low expression, it may be reasonable to sequence up to 100 million reads. In the case of single cells, quantification can be achieved with 1 million reads although only 50000 reads is sufficient for most highly expressed genes.</p>
+<p>An optimal depth should account for the complexity of the studied transcriptome. There has been evidence that the added resolution of deeper sequencing can be accompanied by the detection of unwanted noise and off-target transcripts, including ambient RNA (CITATION MISSING HERE). This however can be assessed by using <strong>saturation curves (ADD DIAGRAM HERE)</strong>.</p>
+</section>
+<section id="number-of-replicates" class="level3" data-number="3.1.4">
+<h3 data-number="3.1.4" class="anchored" data-anchor-id="number-of-replicates"><span class="header-section-number">3.1.4</span> Number of replicates</h3>
+<p>Beyond our choice of library protocol and size, we need to determine how many replicates to include. Our decision depends on the level of technical variability associated with our RNA-seq procedure, the biological variability in our system of interest and our desired statistical power. These can be determined by power analyses.</p>
+<p>It will also be important to plan sequencing experiments, especially when samples must be sequenced in batches to help minimize the level of technical variability. Notable good practices are randomized sample processing and ensuring covariates such as sex, age, and case/control status are well mixed across batches.</p>
+<ul>
+<li>in practice, three biological replicates is seen as the bare minimum for inference</li>
+</ul>
+<p>To run a power analysis, a smaller experiment can be run to acquire estimates for within-group variance and gene expression levels. The exact power will depend on the software used for differential expression. Many of these packages provide estimates to users. If the method you use includes an FDR score (False-Discovery Rate), the proportion of highly expressed genes in your dataset will affect your power. In these cases, it may be preferable to remove lowly-expressed genes form your dataset beforehand. Alternatively, increasing the sequencing depth is possible. However, improvements in power from depth increases will saturate for any sample, at which point increasing the number of replicates is a better solution.</p>
+<p>To this end, tools such as <strong>Scotty</strong> are available to discern the optimal trade-off between the number of replicates and sequencing depth such that power and experiment costs are optimized.</p>
+<p>NOTE: ADD TABLE SHOWING POWER CALCULATIONS - consider an exercise</p>
+</section>
+</section>
+<section id="analysis" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="analysis"><span class="header-section-number">3.2</span> Analysis</h2>
+<p>Here, we will look at the standard steps required to go from raw sequencing reads to differential expression.</p>
+<section id="quality-control-checkpoints" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="quality-control-checkpoints"><span class="header-section-number">3.2.1</span> Quality Control Checkpoints</h3>
+<section id="raw-reads" class="level4" data-number="3.2.1.1">
+<h4 data-number="3.2.1.1" class="anchored" data-anchor-id="raw-reads"><span class="header-section-number">3.2.1.1</span> Raw Reads</h4>
+<p>Quality control of raw reads involves the following metrics/indicators:</p>
+<ul>
+<li><p>sequence quality</p></li>
+<li><p>GC content</p></li>
+<li><p>Adapter presence</p></li>
+<li><p>k-mer overrepresentation and duplicated reads (sequencing errors)</p></li>
+<li><p>PCR artifacts</p></li>
+<li><p>sample/RNA contamination</p></li>
+</ul>
+<p>Satisfactory duplication, k-mer and GC content levels will vary between experiments and organisms. However, we expect samples to have similar estimates for each within an experiment. A rule-of-thumb is to discard samples <strong>over 30% disagreement.</strong> These analyses can be done by FASTQC for Illumina-based reads or NGSQC for any platform.</p>
+<p>In general, sequence quality decreases as we approach the 3’ end of the sequence. If the quality drops too much, we can trim the 3’ of reads to increase mappability. This can be done by method such as FASTX-Toolkit and Trimmomatic.</p>
+</section>
+<section id="read-alignment" class="level4" data-number="3.2.1.2">
+<h4 data-number="3.2.1.2" class="anchored" data-anchor-id="read-alignment"><span class="header-section-number">3.2.1.2</span> Read Alignment</h4>
+<p>Reads can be mapped to a genome or transcriptome depending on your research question and the quality of the reference panel. A crucial quality metric is the <strong>percentage of mapped reads</strong>. This acts as an estimate of sequencing accuracy and of contamination. We expect 70-90% of reads to map to the human genome with a significant proportion of reads mapping to a small number of identical regions with similar quality (multi-mapping reads). When mapped to the transcriptome, we expect a slight decrease in percentage as reads from unannotated transcripts are lost and an increase in multi-mapping reads.</p>
+<p>We also examine the uniformity of read coverage on exons and the mapped strand. Reads accumulating in the 3’ end of transcripts in a poly(A) selected sample may indicate low quality RNA. GC content of mapped reads can also reveal PCR biases (REVIEW). Tools such as Picard, RSeQC and Qualimap can be used for alignment.</p>
+</section>
+<section id="quantification" class="level4" data-number="3.2.1.3">
+<h4 data-number="3.2.1.3" class="anchored" data-anchor-id="quantification"><span class="header-section-number">3.2.1.3</span> Quantification</h4>
+<p>After transcript quantification, users should check GC content and gene length biases so the normalization methods can correct and concerns. If the reference transcriptome is well annotated, researchers can use biotype composition to further assess sample quality (e.g: we would expect low rRNA levels from a poly(A) protocol sample. Useful plots can be provided by NOISeq and EDA-seq in R.</p>
+</section>
+<section id="reproducibility" class="level4" data-number="3.2.1.4">
+<h4 data-number="3.2.1.4" class="anchored" data-anchor-id="reproducibility"><span class="header-section-number">3.2.1.4</span> Reproducibility</h4>
+<p>Reproducibility between replicates is essential to ensure the data can provide useful insights. We expect technical replicates to have a high reproducibility for gene expression (Spearman <span class="math inline">\(R^2 &gt; 0.9\)</span>). Reproducibility across biological replicates will depend on the expected heterogeneity, disease status and other covariates. A good solution here is to visualize PCAs and see if clusters form batch or covariate-specific clusters.</p>
+</section>
+<section id="transcript-identification" class="level4" data-number="3.2.1.5">
+<h4 data-number="3.2.1.5" class="anchored" data-anchor-id="transcript-identification"><span class="header-section-number">3.2.1.5</span> Transcript Identification</h4>
+<p>In the presence of a reference genome, RNA-seq reads will be mapped onto the genome or transcriptome, to determine what transcript they represent. Using a reference transcriptome prevents the discovery of novel transcripts and emphasizes quantification.</p>
+<p>In the absence of a sequenced genome, we first need to assemble reads into contigs which represent the candidate transcriptome which we can map the reads to for quantification. Read coverage can be used to determine expression level in both cases. Transcript identification and quantification and be done jointly or sequentially.</p>
+</section>
+<section id="alignment" class="level4" data-number="3.2.1.6">
+<h4 data-number="3.2.1.6" class="anchored" data-anchor-id="alignment"><span class="header-section-number">3.2.1.6</span> Alignment</h4>
+<p>As mentioned previously, we have the choice between mapping to a reference <strong>genome</strong> or <strong>transcriptome</strong>. Both approaches often find reads that map to multiple regions due to repetitive sequences or shared protein domains across genes. These account for a large proportion of reads (even larger when using a transcriptome due to isoforms) and SHOULD NOT be discarded. In isoform-based analyses, proper transcript identification and quantification will require more rigour to generate reproducible insights.</p>
+</section>
+<section id="transcript-discovery" class="level4" data-number="3.2.1.7">
+<h4 data-number="3.2.1.7" class="anchored" data-anchor-id="transcript-discovery"><span class="header-section-number">3.2.1.7</span> Transcript Discovery</h4>
+<p>As short reads rarely span across splice junctions, they struggle to accurately infer full-length transcripts. It is possible to use tools such as GRIT which incorporate CAGE or RAMPAGE data to improve annotation ability. In general, paired-end reads and sequencing depth and replicates can greatly reduce false positive for transcript discovery. Methods that were adapted to this task for short read data include Cufflinks, iReckon, SLIDE, StringTie and Montebello.</p>
+<p>An easier solution if isoforms or novel transcript discovery is desired is to use <strong>long read sequencing data such as SMRT,</strong> which will identify more accurate contigs and map to reference transcriptomes with greater ease.</p>
+</section>
+<section id="de-novo-transcript-reconstruction" class="level4" data-number="3.2.1.8">
+<h4 data-number="3.2.1.8" class="anchored" data-anchor-id="de-novo-transcript-reconstruction"><span class="header-section-number">3.2.1.8</span> De novo transcript reconstruction</h4>
+<p>If there is no reference genome available, then RNA reads must be assembled de novo. There exists many packages for this task including SOAPdenovo-Trans, Oases, Trans-AByS and Trinity. Paired-end strand-specific sequencing or long read sequencing are usually preferred for this task. Too low (miss lowly expressed genes) and too high (contamination risk and increased runtime) of a sequencing depth can be problematic for accurate inference. It is therefore recommended to reduce the number of reads in silico for deeply sequenced samples. In comparative analyses, it is important to pool all reads together to generate a single set of contigs.</p>
+</section>
+<section id="transcript-quantification" class="level4" data-number="3.2.1.9">
+<h4 data-number="3.2.1.9" class="anchored" data-anchor-id="transcript-quantification"><span class="header-section-number">3.2.1.9</span> Transcript quantification</h4>
+<p>This metric is usually defined as the number of reads mapping to a given transcript sequence. Programs such as HTSeq-count or featureCounts provide simple frameworks to aggregate raw counts. A gene-level quantification approach (focus on gene instead of individual isoforms) uses a gene transfer format (GTF) file containing genome coordinates of exons and genes and may have discarded multireads.</p>
+<p>In practice, raw read counts are not ideal for analysis as they are biased by transcript length, total read number, and sequencing biases. To this end normalized metrics are used to facilitate fair comparisons across samples.</p>
+<ul>
+<li><p><strong>Reads per kilobase of exon model per million reads (RPKM)</strong></p>
+<ul>
+<li><p>RPKM is a within-sample normalization method which removes transcript-length and library size effects</p></li>
+<li><p>Designed for single-end reads</p></li>
+</ul></li>
+<li><p><strong>Fragments per kilobase of exon model per million mapped reads (FPKM)</strong></p>
+<ul>
+<li><p>FPKM is an extension of RPKM designed for paired-end reads</p></li>
+<li><p>Each pair of reads are treated as one fragment here (if they both were mapped). This avoids counting a fragment twice which cannot be done by RPKM.</p></li>
+<li><p>Renders the same output as RPKM on single-end reads.</p></li>
+</ul></li>
+<li><p><strong>Transcripts per million (TPM)</strong></p>
+<ul>
+<li><p>TPM is an extension of RPKM where we first normalize by transcript length and then normalize by sequencing depth.</p></li>
+<li><p>The some of all TPMs is the same for each sample, making it easier to compare the proportion of reads mapped to a gene across samples.</p></li>
+<li><p>Can also convert FPKM counts into TPM</p></li>
+</ul></li>
+</ul>
+<p>Note that the correction for transcript-length is crucial for <strong>within-sample</strong> comparison across genes and not for comparing a gene across samples (as the bias would affect all samples the same). Cufflinks however can identify cases where there are significant differences in gene length across samples that must be addressed.</p>
+<p>Although TPM facilitates cross-sample comparisons, it still has biases which could be resolved by other normalization techniques.</p>
+</section>
+</section>
+<section id="section" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="section"><span class="header-section-number">3.2.2</span> </h3>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./InstallationGuide.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Installation Guide</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./Galaxy_Tutorial.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Galaxy Tutorial</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="https://github.com/aosakwe">Adrien Osakwe || 2024</a>
+  </li>  
+</ul>
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>

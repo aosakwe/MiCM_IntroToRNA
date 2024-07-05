@@ -1,0 +1,44 @@
+---
+title: "Intro"
+author: "Adrien Osakwe"
+---
+
+## Introduction
+
+::: callout-warning
+This webpage is still incomplete. If you see mistakes or missing material, feel free to contact me or make a pull request!
+:::
+
+RNA sequencing has become a focal point of genomics research due to its combined ability to identify and quantify transcripts through a single assay. Now, RNA-seq has become a staple tool used by researchers to investigate biological mechanisms and disease onset. Many protocols are now available depending on the exact analysis or data being used.
+
+Currently, we can either map RNA-seq reads to a reference genome or assemble the reads de novo to map them onto a transcriptome. Organisms with well-annotated genomes such as our own have the ability to simply map reads to an annotated transcriptome or attempt to identify new reads.
+
+It is also possible to be interested in specific types of RNA (miRNA, mRNA, lncRNA etc.). Can be combined with other genomics assays or biochemical assays to explore other functions (RNA-protein, RNA structure, RNA-RNA).
+
+Different experimental scenarios could exhibit different optimal methods for quantification, normalization and downstream analysis. They also require thorough quality control to ensure the reproducibility of the observed results.
+
+This workshop aims to introduce experimental and computational biologists to the processing and analysis of RNA-seq data. We will look at the different steps and tools required and what considerations to make depending on your research question.
+
+## Acknowledgements
+
+This e-book was developed using material from the following sources:
+
+-   Galaxy
+
+-   DESeq2 vignette
+
+-   OSCA Book
+
+-   Reinnier Padilla (PhD Candidate \@ McGill University)
+
+## Slides
+
+<object data="./Slides/MiCM_IntroRNA_Slides.pdf" type="application/pdf" width="700px" height="700px">
+
+<embed src="./Slides/MiCM_IntroRNA_Slides.pdf">
+
+<p>This browser does not support PDFs. Please download the PDF to view it: `<a href="https://github.com/aosakwe/MiCM_IntroToRNA/Slides/MiCM_IntroRNA_Slides.pdf"`{=html}Download PDF</a>.</p>
+
+</embed>
+
+</object>

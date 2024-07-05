@@ -3,7 +3,6 @@ title: "DESeq2 Analysis"
 author: "Adrien Osakwe"
 format: html
 editor: visual
----mes(sc
 ---
 
 ## Analysis with DESeq2
@@ -66,6 +65,7 @@ dds <- DESeqDataSetFromMatrix(countData = rna_counts,
 
 #Ensure default comparisons are w.r.t control
 dds$condition <- relevel(dds$condition, ref = 'untreated')
+dds
 ```
 
 ```{r}
@@ -76,7 +76,7 @@ rowData(dds)$RandInt <- sample(1:10,nrow(dds),replace = T)
 
 #Check metadata
 colData(dds)
-
+dds
 
 ```
 

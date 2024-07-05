@@ -1,0 +1,47 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "MiCM Intro to RNA-seq"
+  author: "Adrien Osakwe"
+  date: "07/05/2024"
+  repo-url: https://github.com/aosakwe/MiCM_IntroToRNA
+  repo-actions: [edit]
+  sharing: [twitter, linkedin]
+
+  sidebar:
+    logo: cover.png
+    style: "docked"
+    background: primary
+    foreground: light
+    border: true
+    alignment: left
+  navbar:
+    background: success
+    foreground: light
+    left: 
+      - text: "Home"
+        file: index.qmd
+  page-footer:
+    center: 
+      - text: "Adrien Osakwe || 2024"
+        url: "https://github.com/aosakwe"
+    background: primary
+
+
+  chapters:
+    - index.qmd
+    - Book/InstallationGuide.qmd
+    - Book/EDQC_RNA.qmd
+    - Book/Galaxy_Tutorial.qmd
+    - Book/Analysis_DESeq2.qmd
+    - Book/SingleCell_RNA.qmd
+
+
+
+format:
+  html:
+    theme: flatly
+  pdf:
+    documentclass: scrreport
