@@ -1,5 +1,5 @@
 ---
-title: "MiCM Intro to RNA-seq"
+title: "Experimental Design & Processing"
 author: "Adrien Osakwe"
 format: html
 editor: visual
